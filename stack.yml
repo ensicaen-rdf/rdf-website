@@ -17,7 +17,7 @@ volumes:
 
 services:
   website:
-    website: $REGISTRY_URL$REGISTRY_ROOT/rdf-website
+    image: $REGISTRY_URL$REGISTRY_ROOT/rdf-website
     networks:
       - traefik-public
     deploy:
