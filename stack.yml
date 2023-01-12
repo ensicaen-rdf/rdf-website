@@ -1,0 +1,36 @@
+version: '3.8'
+
+x-service-deploy-default-policy: &service-deploy-default-policy
+  restart_policy:
+    condition: any
+    delay: 20s
+    max_attempts: 5
+
+networks:
+  db-net:
+  traefik-public:
+    name: traefik-public
+    external: true
+
+volumes:
+  db-data:
+
+services:
+  website:
+    image: $REGISTRY_URL$REGISTRY_ROOT/rdf-website
+    networks:
+      - traefik-public
+    deploy:
+      <<: *service-deploy-default-policy
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+      labels:
+        traefik.enable: 'true'
+        traefik.http.routers.rdf-website.rule: Host(`intensif06.ensicaen.fr`)
+        traefik.http.routers.rdf-website.entrypoints: https
+        traefik.http.routers.rdf-website.tls: 'true'
+        traefik.http.routers.rdf-website.tls.certresolver: le
+        traefik.http.routers.rdf-website.service: rdf-website
+        traefik.http.services.rdf-website.loadbalancer.server.port: 80
